@@ -1,0 +1,217 @@
+.mycards-stats {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+  flex-wrap: wrap;
+}
+
+.mycards-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+  min-width: 100px;
+  border-radius: var(--radius-md);
+  border: 1px solid currentColor;
+}
+
+.mycards-stat__count {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.mycards-stat__label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+/* Empty State */
+.mycards-empty {
+  text-align: center;
+  padding: var(--space-2xl);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.mycards-empty__icon {
+  font-size: 4rem;
+}
+
+.mycards-empty h2 {
+  font-size: 1.5rem;
+}
+
+.mycards-empty p {
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-md);
+}
+
+/* Controls */
+.mycards-controls {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-xl);
+  border-radius: var(--radius-md);
+}
+
+@media (max-width: 600px) {
+  .mycards-controls { flex-direction: column; }
+}
+
+/* ── Karten-Wrapper mit Fusions-Button ── */
+.mycards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  justify-content: center;
+}
+
+.mycards-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.mycards-fuse-btn {
+  background: linear-gradient(135deg, #ffd700, #ff8c00);
+  color: #000;
+  font-weight: 900;
+  font-size: 0.75rem;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  box-shadow: 0 0 15px rgba(255,215,0,0.5);
+}
+
+.mycards-fuse-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(255,215,0,0.8);
+}
+
+.mycards-holo-label {
+  font-size: 0.7rem;
+  font-weight: 900;
+  color: #ffd700;
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 8px rgba(255,215,0,0.8);
+}
+
+/* Fusions-Erfolgs/Fehler Meldung */
+.mycards-fusion-msg {
+  text-align: center;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  margin-bottom: var(--space-lg);
+  animation: form-slide-up 0.4s ease;
+}
+
+.mycards-fusion-msg--success {
+  background: rgba(74,222,128,0.15);
+  border: 1px solid rgba(74,222,128,0.4);
+  color: #4ade80;
+}
+
+.mycards-fusion-msg--error {
+  background: rgba(248,113,113,0.15);
+  border: 1px solid rgba(248,113,113,0.4);
+  color: #fca5a5;
+}
+
+/* ── MAX HOLO Fusions-Button ── */
+.mycards-fuse-btn--max {
+  background: linear-gradient(135deg, #ff4500, #ffd700, #b44fff);
+  background-size: 200% 200%;
+  animation: max-btn-shift 2s ease infinite;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  box-shadow: 0 0 20px rgba(255,69,0,0.7);
+}
+
+@keyframes max-btn-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ── TIER BUTTONS ── */
+.mycards-fuse-btn--tier-1 {
+  background: linear-gradient(135deg, #ffd700, #b44fff);
+}
+.mycards-fuse-btn--tier-2 {
+  background: linear-gradient(135deg, #ffff00, #ffffff);
+  color: #000;
+}
+.mycards-fuse-btn--tier-3 {
+  background: linear-gradient(135deg, #00ffff, #00bfff);
+}
+.mycards-fuse-btn--tier-4 {
+  background: linear-gradient(135deg, #ff4500, #ff0000);
+}
+.mycards-fuse-btn--tier-5 {
+  background: linear-gradient(135deg, #ff4500, #ffd700, #b44fff);
+  background-size: 200% 200%;
+  animation: max-btn-shift 2s ease infinite;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  box-shadow: 0 0 20px rgba(255,69,0,0.7);
+}
+
+/* ── TIER LABELS ── */
+.mycards-holo-label {
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+.mycards-holo-label--tier-1 { color: #ffd700; text-shadow: 0 0 8px rgba(255,215,0,0.8); }
+.mycards-holo-label--tier-2 { color: #ffff00; text-shadow: 0 0 8px rgba(255,255,0,0.8); }
+.mycards-holo-label--tier-3 { color: #00ffff; text-shadow: 0 0 8px rgba(0,255,255,0.8); }
+.mycards-holo-label--tier-4 { color: #ff4500; text-shadow: 0 0 8px rgba(255,69,0,0.8); }
+.mycards-holo-label--tier-5 {
+  background: linear-gradient(90deg, #ff4500, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.mycards-holo-label--tier-6  { color: #c0c0ff; text-shadow: 0 0 10px rgba(192,192,255,1); }
+.mycards-holo-label--tier-7  { color: #6a0dad; text-shadow: 0 0 12px rgba(138,43,226,1); }
+.mycards-holo-label--tier-8  { color: #fffde7; text-shadow: 0 0 14px rgba(255,255,255,1), 0 0 30px rgba(255,215,0,0.8); }
+.mycards-holo-label--tier-9 {
+  background: linear-gradient(90deg, #ff0080, #00ff80, #0080ff, #ff0080);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: mythic-label 1.5s ease infinite;
+}
+@keyframes mythic-label {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.mycards-holo-label--tier-10 {
+  background: linear-gradient(90deg, #000000, #ff0000, #ffd700, #ff0000, #000000);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: absolute-label 1s ease infinite;
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+}
+@keyframes absolute-label {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

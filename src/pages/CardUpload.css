@@ -1,0 +1,229 @@
+.upload-page {
+  max-width: 1200px;
+}
+
+.upload-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: var(--space-2xl);
+  align-items: flex-start;
+  margin-top: var(--space-xl);
+}
+
+/* ── Formular ────────────────────────────────────────────────────── */
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: var(--space-xl);
+  border-radius: var(--radius-xl);
+}
+
+.upload-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.upload-field label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+}
+
+.upload-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+/* ── Dropzone ────────────────────────────────────────────────────── */
+.upload-dropzone {
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 180px;
+  overflow: hidden;
+  position: relative;
+}
+
+.upload-dropzone:hover {
+  border-color: var(--color-accent);
+  background: rgba(0, 212, 255, 0.05);
+}
+
+.upload-dropzone.has-image {
+  border-style: solid;
+  border-color: var(--color-accent);
+  padding: 0;
+}
+
+.upload-dropzone__preview {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  display: block;
+}
+
+.upload-dropzone__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--color-text-muted);
+}
+
+.upload-dropzone__icon {
+  font-size: 3rem;
+}
+
+.upload-dropzone__hint {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+/* ── Fortschrittsbalken ──────────────────────────────────────────── */
+.upload-progress-bar {
+  height: 8px;
+  background: rgba(255,255,255,0.06);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.upload-progress-bar__fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-purple));
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px var(--color-accent-glow);
+}
+
+.upload-progress-bar span {
+  position: absolute;
+  right: 0;
+  top: -20px;
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+/* ── Seltenheits-Buttons ─────────────────────────────────────────── */
+.rarity-selector {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.rarity-btn {
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background: rgba(255,255,255,0.04);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+.rarity-btn--common.active    { background: rgba(160,160,176,0.2); color: var(--rarity-common); border-color: var(--rarity-common); }
+.rarity-btn--uncommon.active  { background: rgba(74,222,128,0.15); color: var(--rarity-uncommon); border-color: var(--rarity-uncommon); }
+.rarity-btn--rare.active      { background: rgba(96,165,250,0.15); color: var(--rarity-rare); border-color: var(--rarity-rare); }
+.rarity-btn--epic.active      { background: rgba(180,79,255,0.15); color: var(--rarity-epic); border-color: var(--rarity-epic); }
+.rarity-btn--legendary.active { background: rgba(255,215,0,0.15); color: var(--rarity-legendary); border-color: var(--rarity-legendary); box-shadow: 0 0 12px var(--glow-legendary); }
+
+.rarity-btn:hover { color: var(--color-text); border-color: rgba(255,255,255,0.2); }
+
+/* ── Slider ──────────────────────────────────────────────────────── */
+.upload-slider {
+  width: 100%;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255,255,255,0.1);
+  border-radius: var(--radius-full);
+  outline: none;
+  cursor: pointer;
+  margin-top: var(--space-sm);
+}
+
+.upload-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-purple));
+  box-shadow: 0 0 8px var(--color-accent-glow);
+  cursor: pointer;
+}
+
+.upload-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}
+
+/* ── Fehler / Erfolg ─────────────────────────────────────────────── */
+.upload-error {
+  background: rgba(248,113,113,0.15);
+  border: 1px solid rgba(248,113,113,0.4);
+  color: #f87171;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.upload-success {
+  background: rgba(74,222,128,0.15);
+  border: 1px solid rgba(74,222,128,0.4);
+  color: var(--rarity-uncommon);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  animation: fadeInUp 0.4s ease;
+}
+
+/* ── Live-Vorschau ───────────────────────────────────────────────── */
+.upload-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  position: sticky;
+  top: 90px;
+}
+
+.upload-preview__title {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: var(--font-body);
+  font-weight: 700;
+}
+
+.upload-preview__rarity-info {
+  text-align: center;
+  font-size: 0.7rem;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .upload-layout { grid-template-columns: 1fr; }
+  .upload-preview { position: static; order: -1; }
+  .upload-row { grid-template-columns: 1fr; }
+}

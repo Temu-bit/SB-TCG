@@ -1,0 +1,223 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   DUST SHOP – Sternenstaub-Shop Styles
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.dust-shop-page {
+  max-width: 1100px;
+}
+
+/* ── Balance Banner ──────────────────────────────────────────────────────── */
+.dust-balance {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-lg) var(--space-xl);
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--space-lg);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(255, 165, 0, 0.08));
+  flex-wrap: wrap;
+}
+
+.dust-balance__icon {
+  font-size: 3rem;
+  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.8));
+  animation: float 3s ease-in-out infinite;
+}
+
+.dust-balance__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dust-balance__label {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.dust-balance__amount {
+  font-size: 2.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ffd700, #ffaa00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.dust-balance__guide {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.dust-guide__title {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.dust-guide__pills {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.dust-guide__pill {
+  font-size: 0.7rem;
+}
+
+/* ── Price Table ─────────────────────────────────────────────────────────── */
+.dust-price-table {
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.dust-price-table__title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-sm);
+}
+
+.dust-price-table__rows {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.dust-price-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.dust-price-row__cost {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ffd700;
+}
+
+/* ── Shop Grid ───────────────────────────────────────────────────────────── */
+.dust-shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+/* ── Single Dust Card ────────────────────────────────────────────────────── */
+.dust-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dust-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(255, 215, 0, 0.15);
+}
+
+.dust-card--broke {
+  opacity: 0.65;
+}
+
+.dust-card--broke:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.dust-card__preview {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: var(--space-md) var(--space-md) 0;
+}
+
+.dust-card__preview .sb-card {
+  width: 100%;
+  max-width: 180px;
+}
+
+.dust-card__owned-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+}
+
+.dust-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+}
+
+.dust-card__name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.2;
+}
+
+.dust-card__buy-btn {
+  width: 100%;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: var(--space-sm);
+  transition: all 0.2s ease;
+}
+
+.dust-card__sell-btn {
+  width: 100%;
+  font-size: 0.8rem;
+  padding: var(--space-xs) var(--space-sm);
+}
+
+/* ── Toast Notification ──────────────────────────────────────────────────── */
+.dust-toast {
+  position: fixed;
+  bottom: var(--space-xl);
+  right: var(--space-xl);
+  z-index: 9999;
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-lg);
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  max-width: 340px;
+}
+
+.dust-toast.success {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.25), rgba(16, 163, 74, 0.2));
+  border: 1px solid rgba(34, 197, 94, 0.5);
+  color: #4ade80;
+}
+
+.dust-toast.error {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(185, 28, 28, 0.2));
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  color: #f87171;
+}
+
+@media (max-width: 768px) {
+  .dust-balance { flex-direction: column; align-items: flex-start; }
+  .dust-balance__guide { margin-left: 0; }
+  .dust-shop-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  .dust-toast { bottom: var(--space-md); right: var(--space-md); left: var(--space-md); }
+}

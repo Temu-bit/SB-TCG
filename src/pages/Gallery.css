@@ -1,0 +1,162 @@
+/* Progress Bar */
+.gallery-progress {
+  position: relative;
+  height: 8px;
+  background: rgba(255,255,255,0.06);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-xl);
+  overflow: visible;
+}
+
+.gallery-progress__bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-purple));
+  border-radius: var(--radius-full);
+  transition: width 1s ease;
+  box-shadow: 0 0 12px var(--color-accent-glow);
+}
+
+.gallery-progress__label {
+  position: absolute;
+  right: 0;
+  top: -22px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+/* Filters */
+.gallery-filters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+}
+
+.gallery-filter-group {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.filter-pill {
+  padding: 4px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: rgba(255,255,255,0.04);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+  text-transform: capitalize;
+  transition: all var(--transition-fast);
+}
+
+.filter-pill:hover { color: var(--color-text); border-color: rgba(255,255,255,0.2); }
+.filter-pill.active { color: var(--color-text); background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
+
+.filter-pill.rarity-common.active    { border-color: var(--rarity-common);    color: var(--rarity-common);    background: rgba(160,160,176,0.1); }
+.filter-pill.rarity-uncommon.active  { border-color: var(--rarity-uncommon);  color: var(--rarity-uncommon);  background: rgba(74,222,128,0.1); }
+.filter-pill.rarity-rare.active      { border-color: var(--rarity-rare);      color: var(--rarity-rare);      background: rgba(96,165,250,0.1); }
+.filter-pill.rarity-epic.active      { border-color: var(--rarity-epic);      color: var(--rarity-epic);      background: rgba(180,79,255,0.1); }
+.filter-pill.rarity-legendary.active { border-color: var(--rarity-legendary); color: var(--rarity-legendary); background: rgba(255,215,0,0.1); }
+
+.gallery-select {
+  min-width: 140px;
+  max-width: 180px;
+}
+
+/* Modal */
+.gallery-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  animation: fadeInUp 0.3s ease;
+}
+
+.gallery-modal__inner {
+  display: flex;
+  gap: var(--space-xl);
+  align-items: flex-start;
+  position: relative;
+  max-width: 700px;
+  width: 100%;
+}
+
+.gallery-modal__info {
+  flex: 1;
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.gallery-modal__name {
+  font-size: 1.6rem;
+}
+
+.gallery-modal__desc {
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.gallery-modal__stat {
+  font-size: 1rem;
+  color: var(--color-secondary);
+  font-weight: 700;
+}
+
+.gallery-modal__owned {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.gallery-modal__owned.yes {
+  background: rgba(74,222,128,0.15);
+  color: var(--rarity-uncommon);
+  border: 1px solid rgba(74,222,128,0.3);
+}
+
+.gallery-modal__owned.no {
+  background: rgba(248,113,113,0.1);
+  color: #f87171;
+  border: 1px solid rgba(248,113,113,0.3);
+}
+
+.gallery-modal__close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.gallery-modal__close:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+@media (max-width: 600px) {
+  .gallery-modal__inner { flex-direction: column; align-items: center; }
+  .gallery-filters { flex-direction: column; }
+}

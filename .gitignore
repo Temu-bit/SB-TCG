@@ -1,0 +1,13 @@
+# Abhängigkeiten & Build-Artefakte
+node_modules/
+dist/
+
+# Environment-Variablen (NIEMALS committen!)
+.env
+.env.local
+.env.production
+
+# Editor-Dateien
+.DS_Store
+.vscode/
+*.log

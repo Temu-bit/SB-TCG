@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
+import boosterPackImg from '../assets/booster-pack.png';
 import './Home.css';
 
 const QUICK_ACTIONS = [
@@ -109,7 +110,7 @@ const Home = () => {
       {/* Call to Action wenn keine Credits */}
       {boosterCredits === 0 && (
         <section className="home-cta glass">
-          <div className="home-cta__icon">😢</div>
+          <img src={boosterPackImg} alt="Booster Pack" className="home-cta__booster-img home-cta__booster-img--dimmed" />
           <div>
             <h3>Keine Booster-Packs mehr</h3>
             <p>Tausche Karten mit anderen Spielern um neue zu bekommen!</p>
@@ -122,7 +123,7 @@ const Home = () => {
 
       {boosterCredits > 0 && (
         <section className="home-cta home-cta--gold glass">
-          <div className="home-cta__icon animate-float">🎁</div>
+          <img src={boosterPackImg} alt="Booster Pack" className="home-cta__booster-img animate-float" />
           <div>
             <h3>Du hast {boosterCredits} Booster-Pack{boosterCredits > 1 ? 's' : ''}!</h3>
             <p>Öffne sie jetzt und entdecke seltene Karten.</p>

@@ -1,7 +1,9 @@
 import { useEffect, useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { getCardsByIds, fuseCard, sellCard, FUSION_TIERS } from '../firebase/firestore';
 import { useAuth } from '../context/useAuth';
 import SBCard from '../components/Card/SBCard';
+import boosterPackImg from '../assets/booster-pack.png';
 import './MyCards.css';
 
 const SORT_OPTIONS = [
@@ -124,10 +126,10 @@ const MyCards = () => {
 
       {cards.length === 0 ? (
         <div className="mycards-empty glass">
-          <div className="mycards-empty__icon animate-float">🃏</div>
+          <img src={boosterPackImg} alt="Booster Pack" className="mycards-empty__booster-img animate-float" />
           <h2>Noch keine Karten!</h2>
           <p>Öffne Booster-Packs um deine erste Karte zu erhalten.</p>
-          <a href="/SB-Sammelkartenspiel/booster" className="btn btn-gold btn-lg">✨ Jetzt Booster öffnen</a>
+          <Link to="/booster" className="btn btn-gold btn-lg">✨ Jetzt Booster öffnen</Link>
         </div>
       ) : (
         <>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/useAuth';
 import { openBoosterPack, claimFreeBoosters } from '../firebase/firestore';
 import SBCard from '../components/Card/SBCard';
+import boosterPackImg from '../assets/booster-pack.png';
 import './Booster.css';
 
 const Booster = () => {
@@ -134,14 +135,17 @@ const Booster = () => {
                 disabled={loading}
               >
                 <div className="booster-pack-image-container">
-                  <img src="/SB-Sammelkartenspiel/booster-pack.png" alt="Booster Pack" className="booster-pack-img" />
+                  <img src={boosterPackImg} alt="Booster Pack" className="booster-pack-img" />
                 </div>
               </button>
             </>
           ) : (
             <div className="booster-empty">
+              <div className="booster-pack-image-container booster-pack-image-container--empty">
+                <img src={boosterPackImg} alt="Booster Pack" className="booster-pack-img booster-pack-img--empty" />
+              </div>
               <h2>Keine Booster-Packs übrig!</h2>
-              <p>Du kannst weitere durch Events, Level-Ups oder Tauschgeschäfte verdienen.</p>
+              <p>Warte auf die Regeneration oben oder verdiene weitere durch Events und Tauschgeschäfte.</p>
             </div>
           )}
         </div>

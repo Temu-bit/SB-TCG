@@ -47,6 +47,19 @@
   font-size: 4rem;
 }
 
+.mycards-empty__booster-img {
+  width: 160px;
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 20px rgba(138, 43, 226, 0.8)) drop-shadow(0 0 40px rgba(255, 215, 0, 0.45));
+  margin-bottom: var(--space-sm);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mycards-empty__booster-img:hover {
+  transform: scale(1.08) translateY(-6px);
+}
+
 .mycards-empty h2 {
   font-size: 1.5rem;
 }

@@ -155,6 +155,18 @@
   flex-shrink: 0;
 }
 
+.home-cta__booster-img {
+  width: 90px;
+  height: auto;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 16px rgba(138, 43, 226, 0.75)) drop-shadow(0 0 10px rgba(255, 215, 0, 0.45));
+}
+
+.home-cta__booster-img--dimmed {
+  filter: grayscale(0.5) opacity(0.6) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+  animation: none;
+}
+
 .home-cta h3 {
   font-size: 1.1rem;
   margin-bottom: var(--space-xs);

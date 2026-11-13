@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { subscribeToAllCards } from '../firebase/firestore';
 import { useAuth } from '../context/useAuth';
 import SBCard from '../components/Card/SBCard';
+import galleryBg from '../assets/gallery-bg.jpg';
 import './Gallery.css';
 
 const RARITIES = ['all', 'common', 'uncommon', 'rare', 'epic', 'legendary'];
@@ -37,9 +38,17 @@ const Gallery = () => {
   const total  = filtered.length;
 
   return (
-    <div className="page">
-      {/* Header */}
-      <h1 className="page-title text-gradient-blue">📖 Karten-Galerie</h1>
+    <div className="page gallery-page">
+      <div 
+        className="gallery-bg" 
+        style={{ 
+          backgroundImage: `linear-gradient(180deg, rgba(13, 13, 26, 0.72) 0%, rgba(13, 13, 26, 0.38) 35%, rgba(13, 13, 26, 0.85) 100%), url(${galleryBg})` 
+        }} 
+        aria-hidden="true" 
+      />
+      <div className="gallery-content">
+        {/* Header */}
+        <h1 className="page-title text-gradient-blue">📖 Karten-Galerie</h1>
       <p className="page-subtitle">
         Entdecke alle Santa-Blanca-Karten — {owned} / {total} in deiner Sammlung
       </p>
@@ -127,6 +136,7 @@ const Gallery = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };

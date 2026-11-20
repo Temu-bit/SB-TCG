@@ -1,5 +1,5 @@
 // Web Audio API Synthesizer für Santa-Blanca TCG
-// 100% offline, keine externen Audio-Dateien nötig, latenzfrei.
+// High-Fidelity synthetisierte TCG-Soundeffekte: 100% offline & ohne externe Dateien.
 
 class SoundManager {
   constructor() {
@@ -29,82 +29,141 @@ class SoundManager {
     return this.muted;
   }
 
-  // 1. Pack Aufreißen (Foil Tear)
+  // 1. Authentischer Booster-Foil Aufreißsound (Knisternde Folie + plastisches Zerreißen + Druck-Pop)
   playPackTear() {
     if (this.muted) return;
     this.init();
     if (!this.ctx) return;
 
     const t = this.ctx.currentTime;
-    
-    // Rauschen (Folie zerreißen)
-    const bufferSize = this.ctx.sampleRate * 0.45;
-    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const sampleRate = this.ctx.sampleRate;
+    const duration = 0.55;
+
+    // A) Knisterndes Folien-Rauschen mit unregelmäßigem Textur-Jitter
+    const bufferSize = Math.floor(sampleRate * duration);
+    const buffer = this.ctx.createBuffer(1, bufferSize, sampleRate);
     const data = buffer.getChannelData(0);
+
     for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
+      // Mikro-Spikes simulieren das Abreißen einzelner Fasern der Folie
+      const microCrackle = Math.random() > 0.88 ? (Math.random() * 2 - 1) * 1.5 : (Math.random() * 0.4 - 0.2);
+      data[i] = microCrackle;
     }
 
-    const noise = this.ctx.createBufferSource();
-    noise.buffer = buffer;
+    const noiseSource = this.ctx.createBufferSource();
+    noiseSource.buffer = buffer;
 
-    // Filter-Sweep nach oben
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(800, t);
-    filter.frequency.exponentialRampToValueAtTime(3200, t + 0.35);
-    filter.Q.setValueAtTime(3, t);
+    // Resonanter Bandpass-Filter sweep (Zzzzz-RRRIP)
+    const bandpass = this.ctx.createBiquadFilter();
+    bandpass.type = 'bandpass';
+    bandpass.frequency.setValueAtTime(1100, t);
+    bandpass.frequency.exponentialRampToValueAtTime(4800, t + 0.35);
+    bandpass.frequency.exponentialRampToValueAtTime(1800, t + duration);
+    bandpass.Q.setValueAtTime(4.2, t);
 
-    // Lautstärke-Hüllkurve
+    // Highpass für knisternde Folienbrillanz
+    const highpass = this.ctx.createBiquadFilter();
+    highpass.type = 'highpass';
+    highpass.frequency.setValueAtTime(1500, t);
+
+    // Dynamische Lautstärke
     const gain = this.ctx.createGain();
     gain.gain.setValueAtTime(0.01, t);
-    gain.gain.linearRampToValueAtTime(0.35, t + 0.08);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+    gain.gain.linearRampToValueAtTime(0.42, t + 0.06);
+    gain.gain.linearRampToValueAtTime(0.35, t + 0.25);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
 
-    noise.connect(filter);
-    filter.connect(gain);
+    noiseSource.connect(bandpass);
+    bandpass.connect(highpass);
+    highpass.connect(gain);
     gain.connect(this.ctx.destination);
 
-    noise.start(t);
-    noise.stop(t + 0.45);
+    noiseSource.start(t);
+    noiseSource.stop(t + duration);
 
-    // Begleitender Bass-Pop beim Reißen
-    const osc = this.ctx.createOscillator();
-    const oscGain = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(140, t);
-    osc.frequency.exponentialRampToValueAtTime(45, t + 0.25);
-    oscGain.gain.setValueAtTime(0.3, t);
-    oscGain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-    osc.connect(oscGain);
-    oscGain.connect(this.ctx.destination);
-    osc.start(t);
-    osc.stop(t + 0.25);
+    // B) Subtiler Vakuum-Pop beim Brechen des Luftverschlusses
+    const popOsc = this.ctx.createOscillator();
+    const popGain = this.ctx.createGain();
+    popOsc.type = 'sine';
+    popOsc.frequency.setValueAtTime(160, t);
+    popOsc.frequency.exponentialRampToValueAtTime(55, t + 0.18);
+
+    popGain.gain.setValueAtTime(0.38, t);
+    popGain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+
+    popOsc.connect(popGain);
+    popGain.connect(this.ctx.destination);
+    popOsc.start(t);
+    popOsc.stop(t + 0.18);
   }
 
-  // 2. Karte umdrehen / Flip
+  // 2. Taktiler Karten-Umdreh-Sound (Realistischer "Thwip / Card Snap" wie bei einer echten TCG-Karte)
   playCardFlip() {
     if (this.muted) return;
     this.init();
     if (!this.ctx) return;
 
     const t = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
+    const sampleRate = this.ctx.sampleRate;
 
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(350, t);
-    osc.frequency.exponentialRampToValueAtTime(600, t + 0.08);
-    osc.frequency.exponentialRampToValueAtTime(250, t + 0.18);
+    // A) Sanfter Luftzug beim Wenden (Swoosh)
+    const swooshLen = Math.floor(sampleRate * 0.14);
+    const swooshBuf = this.ctx.createBuffer(1, swooshLen, sampleRate);
+    const swooshData = swooshBuf.getChannelData(0);
+    for (let i = 0; i < swooshLen; i++) {
+      swooshData[i] = (Math.random() * 2 - 1) * (1 - i / swooshLen);
+    }
 
-    gain.gain.setValueAtTime(0.01, t);
-    gain.gain.linearRampToValueAtTime(0.2, t + 0.04);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+    const swoosh = this.ctx.createBufferSource();
+    swoosh.buffer = swooshBuf;
 
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.start(t);
-    osc.stop(t + 0.18);
+    const swooshFilter = this.ctx.createBiquadFilter();
+    swooshFilter.type = 'bandpass';
+    swooshFilter.frequency.setValueAtTime(800, t);
+    swooshFilter.frequency.exponentialRampToValueAtTime(1600, t + 0.08);
+    swooshFilter.Q.setValueAtTime(2.5, t);
+
+    const swooshGain = this.ctx.createGain();
+    swooshGain.gain.setValueAtTime(0.01, t);
+    swooshGain.gain.linearRampToValueAtTime(0.25, t + 0.04);
+    swooshGain.gain.exponentialRampToValueAtTime(0.001, t + 0.14);
+
+    swoosh.connect(swooshFilter);
+    swooshFilter.connect(swooshGain);
+    swooshGain.connect(this.ctx.destination);
+    swoosh.start(t);
+
+    // B) Knackiger Karton-Snap (Das "Klack / Snap" wenn die Karte umklappt)
+    const snapT = t + 0.04;
+    const snapOsc = this.ctx.createOscillator();
+    const snapGain = this.ctx.createGain();
+
+    snapOsc.type = 'triangle';
+    snapOsc.frequency.setValueAtTime(1850, snapT);
+    snapOsc.frequency.exponentialRampToValueAtTime(320, snapT + 0.045);
+
+    snapGain.gain.setValueAtTime(0.4, snapT);
+    snapGain.gain.exponentialRampToValueAtTime(0.001, snapT + 0.045);
+
+    snapOsc.connect(snapGain);
+    snapGain.connect(this.ctx.destination);
+    snapOsc.start(snapT);
+    snapOsc.stop(snapT + 0.05);
+
+    // Zweiter Mikro-Klick für plastische Haptik
+    const snapOsc2 = this.ctx.createOscillator();
+    const snapGain2 = this.ctx.createGain();
+    snapOsc2.type = 'sine';
+    snapOsc2.frequency.setValueAtTime(750, snapT + 0.015);
+    snapOsc2.frequency.exponentialRampToValueAtTime(180, snapT + 0.055);
+
+    snapGain2.gain.setValueAtTime(0.25, snapT + 0.015);
+    snapGain2.gain.exponentialRampToValueAtTime(0.001, snapT + 0.055);
+
+    snapOsc2.connect(snapGain2);
+    snapGain2.connect(this.ctx.destination);
+    snapOsc2.start(snapT + 0.015);
+    snapOsc2.stop(snapT + 0.06);
   }
 
   // 3. Enthüllungs-Sounds nach Seltenheit
@@ -116,22 +175,22 @@ class SoundManager {
     const t = this.ctx.currentTime;
 
     if (rarity === 'legendary') {
-      // Epische Triumphal-Fanfare & Schimmer
+      // Epische Triumphal-Fanfare & funkelnder Schimmer
       const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51];
       notes.forEach((freq, idx) => {
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = idx % 2 === 0 ? 'triangle' : 'sine';
-        osc.frequency.setValueAtTime(freq, t + idx * 0.06);
+        osc.frequency.setValueAtTime(freq, t + idx * 0.055);
 
-        gain.gain.setValueAtTime(0, t + idx * 0.06);
-        gain.gain.linearRampToValueAtTime(0.25, t + idx * 0.06 + 0.03);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.06 + 0.9);
+        gain.gain.setValueAtTime(0, t + idx * 0.055);
+        gain.gain.linearRampToValueAtTime(0.28, t + idx * 0.055 + 0.025);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.055 + 0.85);
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
-        osc.start(t + idx * 0.06);
-        osc.stop(t + idx * 0.06 + 0.9);
+        osc.start(t + idx * 0.055);
+        osc.stop(t + idx * 0.055 + 0.85);
       });
     } else if (rarity === 'epic') {
       // Mystischer violetter Dreiklang
@@ -140,16 +199,16 @@ class SoundManager {
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, t + idx * 0.08);
+        osc.frequency.setValueAtTime(freq, t + idx * 0.07);
 
-        gain.gain.setValueAtTime(0, t + idx * 0.08);
-        gain.gain.linearRampToValueAtTime(0.2, t + idx * 0.08 + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.08 + 0.7);
+        gain.gain.setValueAtTime(0, t + idx * 0.07);
+        gain.gain.linearRampToValueAtTime(0.22, t + idx * 0.07 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.07 + 0.65);
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
-        osc.start(t + idx * 0.08);
-        osc.stop(t + idx * 0.08 + 0.7);
+        osc.start(t + idx * 0.07);
+        osc.stop(t + idx * 0.07 + 0.65);
       });
     } else if (rarity === 'rare') {
       // Kristallines Doppel-Chime
@@ -157,33 +216,33 @@ class SoundManager {
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, t + idx * 0.07);
+        osc.frequency.setValueAtTime(freq, t + idx * 0.065);
 
-        gain.gain.setValueAtTime(0, t + idx * 0.07);
-        gain.gain.linearRampToValueAtTime(0.18, t + idx * 0.07 + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.07 + 0.5);
+        gain.gain.setValueAtTime(0, t + idx * 0.065);
+        gain.gain.linearRampToValueAtTime(0.18, t + idx * 0.065 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + idx * 0.065 + 0.45);
 
         osc.connect(gain);
         gain.connect(this.ctx.destination);
-        osc.start(t + idx * 0.07);
-        osc.stop(t + idx * 0.07 + 0.5);
+        osc.start(t + idx * 0.065);
+        osc.stop(t + idx * 0.065 + 0.45);
       });
     } else {
-      // Common / Uncommon: Sanfter harmonischer Ton
+      // Common / Uncommon: Sanfter harmonischer Bestätigungston
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(rarity === 'uncommon' ? 440 : 330, t);
-      osc.frequency.exponentialRampToValueAtTime(rarity === 'uncommon' ? 554 : 392, t + 0.12);
+      osc.frequency.exponentialRampToValueAtTime(rarity === 'uncommon' ? 554 : 392, t + 0.1);
 
       gain.gain.setValueAtTime(0.01, t);
-      gain.gain.linearRampToValueAtTime(0.15, t + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+      gain.gain.linearRampToValueAtTime(0.14, t + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
 
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       osc.start(t);
-      osc.stop(t + 0.3);
+      osc.stop(t + 0.25);
     }
   }
 

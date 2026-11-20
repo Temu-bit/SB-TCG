@@ -193,14 +193,29 @@ const Booster = () => {
                 onClick={handleOpenPack}
                 disabled={loading || isTearing}
               >
-                <div className="booster-pack-image-container">
-                  <img src={boosterPackImg} alt="Booster Pack" className="booster-pack-img" />
-                  
-                  {/* Visueller Riss- & Funken-Effekt beim Aufreißen */}
+                <div className="booster-pack-stage">
+                  {/* Unterer Pack-Körper */}
+                  <div className="booster-pack-body">
+                    <img src={boosterPackImg} alt="Booster Pack Body" className="booster-pack-img" />
+                  </div>
+
+                  {/* Oberer Folienstreifen der abreißt */}
+                  <div className="booster-pack-top-strip">
+                    <img src={boosterPackImg} alt="Booster Pack Foil" className="booster-pack-img" />
+                  </div>
+
+                  {/* Spektakuläre Reiß-Naht & Energie-Funken */}
                   {isTearing && (
-                    <div className="booster-tear-fx">
-                      <div className="booster-tear-line" />
-                      <div className="booster-tear-sparks">⚡✨💥</div>
+                    <div className="booster-tear-seam">
+                      <div className="booster-tear-laser" />
+                      <div className="booster-tear-glow" />
+                      <div className="booster-tear-particles">
+                        <span className="spark s1">⚡</span>
+                        <span className="spark s2">✨</span>
+                        <span className="spark s3">✦</span>
+                        <span className="spark s4">💫</span>
+                        <span className="spark s5">⚡</span>
+                      </div>
                     </div>
                   )}
                 </div>

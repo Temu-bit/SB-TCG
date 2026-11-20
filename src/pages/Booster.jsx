@@ -3,6 +3,7 @@ import { useAuth } from '../context/useAuth';
 import { openBoosterPack, claimFreeBoosters } from '../firebase/firestore';
 import SBCard from '../components/Card/SBCard';
 import boosterPackImg from '../assets/booster-pack.png';
+import { sound } from '../utils/sound';
 import './Booster.css';
 
 const Booster = () => {
@@ -10,10 +11,13 @@ const Booster = () => {
   const [loading, setLoading] = useState(false);
   const [drawnCards, setDrawnCards] = useState([]);
   const [opening, setOpening] = useState(false);
+  const [isTearing, setIsTearing] = useState(false);
+  const [revealedCards, setRevealedCards] = useState({});
   const [error, setError] = useState(null);
   const [timeLeft, setTimeLeft] = useState('');
   const [canClaim, setCanClaim] = useState(false);
   const [claiming, setClaiming] = useState(false);
+  const [isMuted, setIsMuted] = useState(sound.isMuted());
 
   const credits = userData?.boosterCredits || 0;
 
@@ -21,7 +25,6 @@ const Booster = () => {
     if (!userData) return;
     
     const calculateTimeLeft = () => {
-      // Nutze createdAt als Fallback, falls lastBoosterClaimTime fehlt
       const lastClaimTime = userData.lastBoosterClaimTime?.toDate() || userData.createdAt?.toDate() || new Date();
       const nextClaimTime = new Date(lastClaimTime.getTime() + 30 * 60 * 1000);
       const now = new Date();
@@ -46,9 +49,10 @@ const Booster = () => {
   const handleClaim = async () => {
     if (!canClaim) return;
     setClaiming(true);
+    sound.playClick();
     try {
       await claimFreeBoosters(userData.id);
-      await refreshUserData(); // Holt die neuen Daten (inkl. neuem lastBoosterClaimTime)
+      await refreshUserData();
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -57,40 +61,92 @@ const Booster = () => {
     }
   };
 
+  // Booster Aufreißen Sequence
   const handleOpenPack = async () => {
-    if (credits <= 0) return;
+    if (credits <= 0 || loading || isTearing) return;
     setLoading(true);
     setError(null);
 
-    try {
-      // 1. Pack Opening Animation starten
-      setOpening(true);
+    // 1. Sound & Reiß-Animation
+    setIsTearing(true);
+    sound.playPackTear();
 
-      // 2. Im Hintergrund DB anfragen
+    try {
+      // 2. Parallel Karten ziehen
       const cards = await openBoosterPack(userData.id);
       
-      // 3. Karten anzeigen (Animation im CSS geregelt durch class .card-reveal)
-      setDrawnCards(cards);
-      
-      // 4. User Data aktualisieren für korrekte Credit-Anzeige
-      await refreshUserData();
+      // 3. Nach der Reiß-Animation (650ms) in den Slow-Reveal Modus wechseln
+      setTimeout(async () => {
+        setDrawnCards(cards);
+        setRevealedCards({});
+        setOpening(true);
+        setIsTearing(false);
+        setLoading(false);
+        await refreshUserData();
+      }, 700);
     } catch (err) {
       console.error(err);
       setError("Fehler beim Öffnen des Booster-Packs.");
+      setIsTearing(false);
       setOpening(false);
-    } finally {
       setLoading(false);
     }
   };
 
+  // Einzelne Karte aufdecken
+  const handleFlipCard = (idx, card) => {
+    if (revealedCards[idx]) return;
+    setRevealedCards((prev) => ({ ...prev, [idx]: true }));
+  };
+
+  // Alle restlichen Karten auf einmal aufdecken
+  const handleRevealAll = () => {
+    sound.playCardFlip();
+    const all = {};
+    drawnCards.forEach((c, idx) => {
+      all[idx] = true;
+    });
+    setRevealedCards(all);
+
+    // Bester Sound für das höchste Rarity-Element abspielen
+    const hasLegendary = drawnCards.some((c) => c.rarity === 'legendary');
+    const hasEpic = drawnCards.some((c) => c.rarity === 'epic');
+    const hasRare = drawnCards.some((c) => c.rarity === 'rare');
+
+    if (hasLegendary) sound.playRevealSound('legendary');
+    else if (hasEpic) sound.playRevealSound('epic');
+    else if (hasRare) sound.playRevealSound('rare');
+    else sound.playRevealSound('common');
+  };
+
   const handleReset = () => {
+    sound.playClick();
     setDrawnCards([]);
+    setRevealedCards({});
     setOpening(false);
   };
 
+  const toggleSound = () => {
+    const nextMuted = sound.toggleMute();
+    setIsMuted(nextMuted);
+    if (!nextMuted) sound.playClick();
+  };
+
+  const revealedCount = Object.keys(revealedCards).length;
+  const allRevealed = drawnCards.length > 0 && revealedCount === drawnCards.length;
+
   return (
     <div className="page booster-page">
-      <h1 className="page-title text-gradient">✨ Booster Öffnen</h1>
+      <div className="booster-header-row">
+        <h1 className="page-title text-gradient">✨ Booster Öffnen</h1>
+        <button 
+          className="booster-sound-toggle glass" 
+          onClick={toggleSound} 
+          title={isMuted ? "Ton einschalten" : "Ton stummschalten"}
+        >
+          {isMuted ? '🔇 Ton aus' : '🔊 Ton an'}
+        </button>
+      </div>
       
       <div className="booster-status glass">
         <span>Deine Booster-Credits:</span>
@@ -102,7 +158,7 @@ const Booster = () => {
       {!opening ? (
         <div className="booster-container">
           
-          {/* FREE BOOSTER SECTION - Nur anzeigen wenn nicht voll */}
+          {/* FREE BOOSTER SECTION */}
           {credits < 2 && (
             <div className="booster-claim-section glass-elevated">
               <h3>🎁 Tägliche Belohnung</h3>
@@ -127,18 +183,29 @@ const Booster = () => {
           {credits < 2 && <div className="booster-divider"></div>}
 
           {credits > 0 ? (
-            <>
-              <p className="page-subtitle">Klicke auf das Pack, um 5 zufällige Karten zu ziehen!</p>
+            <div className="booster-interactive-area">
+              <p className="page-subtitle booster-prompt animate-pulse">
+                ⚡ Klicke auf das Pack, um es aufzureißen!
+              </p>
+              
               <button 
-                className="booster-pack-btn" 
+                className={`booster-pack-btn ${isTearing ? 'is-tearing' : ''}`} 
                 onClick={handleOpenPack}
-                disabled={loading}
+                disabled={loading || isTearing}
               >
                 <div className="booster-pack-image-container">
                   <img src={boosterPackImg} alt="Booster Pack" className="booster-pack-img" />
+                  
+                  {/* Visueller Riss- & Funken-Effekt beim Aufreißen */}
+                  {isTearing && (
+                    <div className="booster-tear-fx">
+                      <div className="booster-tear-line" />
+                      <div className="booster-tear-sparks">⚡✨💥</div>
+                    </div>
+                  )}
                 </div>
               </button>
-            </>
+            </div>
           ) : (
             <div className="booster-empty">
               <div className="booster-pack-image-container booster-pack-image-container--empty">
@@ -150,26 +217,47 @@ const Booster = () => {
           )}
         </div>
       ) : (
+        /* SLOW-REVEAL AREA */
         <div className="booster-reveal-container">
+          <div className="booster-reveal-header">
+            <h2 className="booster-reveal-title text-gradient-gold">
+              {allRevealed ? '🎉 Alle Karten enthüllt!' : `🃏 ${revealedCount} von ${drawnCards.length} aufgedeckt`}
+            </h2>
+            <p className="booster-reveal-subtitle">
+              {allRevealed 
+                ? 'Bewege die Maus über die Karten für den 3D-Hologramm-Effekt!' 
+                : 'Klicke auf eine verdeckte Karte, um sie einzeln zu enthüllen!'}
+            </p>
+
+            {!allRevealed && (
+              <button className="btn btn-outline booster-reveal-all-btn" onClick={handleRevealAll}>
+                ✨ Alle aufdecken
+              </button>
+            )}
+          </div>
+
           <div className="booster-reveal-grid">
             {drawnCards.map((card, idx) => (
-              <SBCard 
-                key={`${card.id}-${idx}`} 
-                card={card} 
-                revealed={true}
-                size="large"
-              />
+              <div key={`${card.id}-${idx}`} className="booster-card-slot animate-fade-in-up" style={{ animationDelay: `${idx * 0.12}s` }}>
+                <SBCard 
+                  card={card} 
+                  faceDown={!revealedCards[idx]}
+                  onFlip={() => handleFlipCard(idx, card)}
+                  size="large"
+                  interactive3D={true}
+                />
+              </div>
             ))}
           </div>
           
-          {drawnCards.length > 0 && (
-            <div className="booster-actions animate-fade-in-up" style={{ animationDelay: '1s' }}>
+          {allRevealed && (
+            <div className="booster-actions animate-fade-in-up">
               <button className="btn btn-primary" onClick={handleReset}>
-                Zurück
+                ← Zurück
               </button>
               {credits > 0 && (
-                <button className="btn btn-gold" onClick={() => { handleReset(); handleOpenPack(); }}>
-                  Nächstes Pack öffnen
+                <button className="btn btn-gold btn-lg animate-pulse-glow" onClick={() => { handleReset(); handleOpenPack(); }}>
+                  ⚡ Nächstes Pack aufreißen ({credits} übrig)
                 </button>
               )}
             </div>

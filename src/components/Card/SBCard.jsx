@@ -1,4 +1,7 @@
-import { getCardImageUrl, PLACEHOLDER_CARD } from '../../cloudinary/config';
+import { useState, useRef } from 'react';
+import { getCardImageUrl } from '../../cloudinary/config';
+import CardBack from './CardBack';
+import { sound } from '../../utils/sound';
 import '../../styles/card.css';
 
 const RARITY_EMOJIS = {
@@ -30,8 +33,15 @@ const SBCard = ({
   className = '',
   count = 1,
   fusionLevel = 0,
+  faceDown = false,
+  onFlip,
+  interactive3D = true,
 }) => {
-  const { name, rarity = 'common', type, power, imagePublicId, emoji } = card;
+  const cardRef = useRef(null);
+  const [isFlipped, setIsFlipped] = useState(!faceDown);
+  const [tiltStyle, setTiltStyle] = useState({});
+
+  const { name, rarity = 'common', type, power, imagePublicId, emoji } = card || {};
 
   const imageUrl = imagePublicId
     ? getCardImageUrl(imagePublicId, { width: size === 'large' ? 600 : 300, height: size === 'large' ? 840 : 420 })
@@ -39,14 +49,56 @@ const SBCard = ({
 
   const typeColor = TYPE_COLORS[type] || '#8888aa';
 
-  return (
-    <div
-      className={`sb-card ${rarity} ${!owned ? 'missing' : ''} ${size === 'large' ? 'sb-card-large' : ''} ${revealed ? 'card-reveal' : ''} ${fusionLevel > 0 ? `card--tier-${fusionLevel}` : ''} ${className}`}
-      onClick={onClick}
-      title={name}
-    >
-      {/* Holografischer Shine */}
+  // 3D Tilt & Gyroskop-Effekt bei Mausbewegung
+  const handleMouseMove = (e) => {
+    if (!interactive3D || !cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = ((y - centerY) / centerY) * -14; // max 14 Grad
+    const rotateY = ((x - centerX) / centerX) * 14;
+
+    const glareX = (x / rect.width) * 100;
+    const glareY = (y / rect.height) * 100;
+
+    setTiltStyle({
+      transform: `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`,
+      '--glare-x': `${glareX}%`,
+      '--glare-y': `${glareY}%`,
+      '--glare-opacity': '1',
+      transition: 'transform 0.08s ease-out, box-shadow 0.08s ease-out',
+    });
+  };
+
+  const handleMouseLeave = () => {
+    if (!interactive3D) return;
+    setTiltStyle({
+      transform: 'perspective(800px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
+      '--glare-opacity': '0',
+      transition: 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.5s ease',
+    });
+  };
+
+  const handleClick = (e) => {
+    if (faceDown && !isFlipped) {
+      setIsFlipped(true);
+      sound.playCardFlip();
+      sound.playRevealSound(rarity);
+      if (onFlip) onFlip(card);
+    }
+    if (onClick) onClick(e);
+  };
+
+  // Kartenvorderseite
+  const cardFront = (
+    <div className="sb-card__face sb-card__face--front">
+      {/* Dynamischer Glanz & Hologramm */}
       <div className="sb-card__shine" />
+      <div className="sb-card__glare" />
 
       {/* Owned Badge */}
       {showOwned && owned && <div className="sb-card__owned-badge">✓ Besitzt</div>}
@@ -77,6 +129,25 @@ const SBCard = ({
         <div className="sb-card__footer">
           <span className={`badge badge-${rarity}`}>{RARITY_EMOJIS[rarity]} {rarity}</span>
           {power && <span className="sb-card__power">⚡{power}</span>}
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div
+      ref={cardRef}
+      className={`sb-card ${rarity} ${!owned ? 'missing' : ''} ${size === 'large' ? 'sb-card-large' : ''} ${revealed ? 'card-reveal' : ''} ${fusionLevel > 0 ? `card--tier-${fusionLevel}` : ''} ${isFlipped ? 'is-flipped' : 'is-face-down'} ${className}`}
+      onClick={handleClick}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={tiltStyle}
+      title={name}
+    >
+      <div className="sb-card__flipper">
+        {cardFront}
+        <div className="sb-card__face sb-card__face--back">
+          <CardBack size={size} />
         </div>
       </div>
     </div>

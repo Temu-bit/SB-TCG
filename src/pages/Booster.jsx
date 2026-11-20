@@ -75,7 +75,7 @@ const Booster = () => {
       // 2. Parallel Karten ziehen
       const cards = await openBoosterPack(userData.id);
       
-      // 3. Nach der Reiß-Animation (650ms) in den Slow-Reveal Modus wechseln
+      // 3. Nach der filmreifen Reiß-Animation (850ms) in den Slow-Reveal Modus wechseln
       setTimeout(async () => {
         setDrawnCards(cards);
         setRevealedCards({});
@@ -83,7 +83,7 @@ const Booster = () => {
         setIsTearing(false);
         setLoading(false);
         await refreshUserData();
-      }, 700);
+      }, 850);
     } catch (err) {
       console.error(err);
       setError("Fehler beim Öffnen des Booster-Packs.");
@@ -94,29 +94,21 @@ const Booster = () => {
   };
 
   // Einzelne Karte aufdecken
-  const handleFlipCard = (idx, card) => {
+  const handleFlipCard = (idx) => {
     if (revealedCards[idx]) return;
     setRevealedCards((prev) => ({ ...prev, [idx]: true }));
   };
 
-  // Alle restlichen Karten auf einmal aufdecken
+  // Alle restlichen Karten nacheinander mit Kaskadeneffekt aufdecken (staggered cascade)
   const handleRevealAll = () => {
-    sound.playCardFlip();
-    const all = {};
+    sound.playClick();
     drawnCards.forEach((c, idx) => {
-      all[idx] = true;
+      setTimeout(() => {
+        setRevealedCards((prev) => ({ ...prev, [idx]: true }));
+        sound.playCardFlip();
+        sound.playRevealSound(c.rarity);
+      }, idx * 130);
     });
-    setRevealedCards(all);
-
-    // Bester Sound für das höchste Rarity-Element abspielen
-    const hasLegendary = drawnCards.some((c) => c.rarity === 'legendary');
-    const hasEpic = drawnCards.some((c) => c.rarity === 'epic');
-    const hasRare = drawnCards.some((c) => c.rarity === 'rare');
-
-    if (hasLegendary) sound.playRevealSound('legendary');
-    else if (hasEpic) sound.playRevealSound('epic');
-    else if (hasRare) sound.playRevealSound('rare');
-    else sound.playRevealSound('common');
   };
 
   const handleReset = () => {
@@ -188,38 +180,42 @@ const Booster = () => {
                 ⚡ Klicke auf das Pack, um es aufzureißen!
               </p>
               
-              <button 
-                className={`booster-pack-btn ${isTearing ? 'is-tearing' : ''}`} 
+              <div 
+                className={`booster-pack-wrapper ${isTearing ? 'is-tearing' : ''}`} 
                 onClick={handleOpenPack}
-                disabled={loading || isTearing}
+                role="button"
+                tabIndex={0}
               >
-                <div className="booster-pack-stage">
-                  {/* Unterer Pack-Körper */}
-                  <div className="booster-pack-body">
-                    <img src={boosterPackImg} alt="Booster Pack Body" className="booster-pack-img" />
-                  </div>
+                <div className="booster-pack-card">
+                  <img src={boosterPackImg} alt="Booster Pack" className="booster-pack-img" />
 
-                  {/* Oberer Folienstreifen der abreißt */}
-                  <div className="booster-pack-top-strip">
-                    <img src={boosterPackImg} alt="Booster Pack Foil" className="booster-pack-img" />
-                  </div>
+                  {/* Reiß-Führung (Schnittlinie & Pull-Tab) */}
+                  {!isTearing && (
+                    <div className="booster-tear-tab-strip">
+                      <span className="booster-tear-pull-badge">AUFREISSEN ▶</span>
+                      <div className="booster-tear-line-dotted" />
+                    </div>
+                  )}
 
-                  {/* Spektakuläre Reiß-Naht & Energie-Funken */}
+                  {/* Filmreife Reiß-Effekte */}
                   {isTearing && (
-                    <div className="booster-tear-seam">
-                      <div className="booster-tear-laser" />
-                      <div className="booster-tear-glow" />
-                      <div className="booster-tear-particles">
-                        <span className="spark s1">⚡</span>
-                        <span className="spark s2">✨</span>
-                        <span className="spark s3">✦</span>
-                        <span className="spark s4">💫</span>
-                        <span className="spark s5">⚡</span>
+                    <div className="booster-tear-fx-layer">
+                      <div className="booster-rip-laser" />
+                      <div className="booster-rip-light-flare" />
+                      <div className="booster-rip-sparks">
+                        <span className="spark-dot d1" />
+                        <span className="spark-dot d2" />
+                        <span className="spark-dot d3" />
+                        <span className="spark-dot d4" />
+                        <span className="spark-dot d5" />
+                        <span className="spark-dot d6" />
+                        <span className="spark-dot d7" />
+                        <span className="spark-dot d8" />
                       </div>
                     </div>
                   )}
                 </div>
-              </button>
+              </div>
             </div>
           ) : (
             <div className="booster-empty">
@@ -253,11 +249,11 @@ const Booster = () => {
 
           <div className="booster-reveal-grid">
             {drawnCards.map((card, idx) => (
-              <div key={`${card.id}-${idx}`} className="booster-card-slot animate-fade-in-up" style={{ animationDelay: `${idx * 0.12}s` }}>
+              <div key={`${card.id}-${idx}`} className="booster-card-slot animate-fade-in-up" style={{ animationDelay: `${idx * 0.1}s` }}>
                 <SBCard 
                   card={card} 
                   faceDown={!revealedCards[idx]}
-                  onFlip={() => handleFlipCard(idx, card)}
+                  onFlip={() => handleFlipCard(idx)}
                   size="large"
                   interactive3D={true}
                 />

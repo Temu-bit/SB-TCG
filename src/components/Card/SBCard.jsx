@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { getCardImageUrl } from '../../cloudinary/config';
 import CardBack from './CardBack';
 import { sound } from '../../utils/sound';
@@ -38,8 +38,15 @@ const SBCard = ({
   interactive3D = true,
 }) => {
   const cardRef = useRef(null);
-  const [isFlipped, setIsFlipped] = useState(!faceDown);
+  const [internalFlipped, setInternalFlipped] = useState(!faceDown);
   const [tiltStyle, setTiltStyle] = useState({});
+
+  // Synchronisiere flip-Status sofort, wenn sich das faceDown-Prop ändert (z. B. bei "Alle aufdecken")
+  useEffect(() => {
+    setInternalFlipped(!faceDown);
+  }, [faceDown]);
+
+  const isFlipped = !faceDown || internalFlipped;
 
   const { name, rarity = 'common', type, power, imagePublicId, emoji } = card || {};
 
@@ -51,7 +58,7 @@ const SBCard = ({
 
   // 3D Tilt & Gyroskop-Effekt bei Mausbewegung
   const handleMouseMove = (e) => {
-    if (!interactive3D || !cardRef.current) return;
+    if (!interactive3D || !cardRef.current || !isFlipped) return;
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -59,7 +66,7 @@ const SBCard = ({
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    const rotateX = ((y - centerY) / centerY) * -14; // max 14 Grad
+    const rotateX = ((y - centerY) / centerY) * -14;
     const rotateY = ((x - centerX) / centerX) * 14;
 
     const glareX = (x / rect.width) * 100;
@@ -85,7 +92,7 @@ const SBCard = ({
 
   const handleClick = (e) => {
     if (faceDown && !isFlipped) {
-      setIsFlipped(true);
+      setInternalFlipped(true);
       sound.playCardFlip();
       sound.playRevealSound(rarity);
       if (onFlip) onFlip(card);

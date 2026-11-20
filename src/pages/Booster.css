@@ -59,7 +59,7 @@
   margin-top: var(--space-xl);
 }
 
-/* ── Interactive Area & Pack Tear ── */
+/* ── Interactive Area ── */
 .booster-interactive-area {
   display: flex;
   flex-direction: column;
@@ -75,114 +75,128 @@
   margin-bottom: 0;
 }
 
-.booster-pack-btn {
-  background: transparent;
-  border: none;
-  padding: 0;
+/* ── Booster Pack Wrapper ── */
+.booster-pack-wrapper {
+  position: relative;
+  display: inline-block;
   cursor: pointer;
+  user-select: none;
   outline: none;
-  display: inline-block;
+}
+
+.booster-pack-card {
   position: relative;
-}
-
-.booster-pack-btn:disabled {
-  cursor: not-allowed;
-}
-
-/* ── Split-Layer Booster Stage ── */
-.booster-pack-stage {
-  position: relative;
-  width: 260px;
-  height: 370px;
   display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.booster-pack-body {
+.booster-pack-wrapper:hover:not(.is-tearing) .booster-pack-card {
+  transform: scale(1.06) translateY(-8px);
+}
+
+/* ── Tear Tab & Guide (Vor dem Klick) ── */
+.booster-tear-tab-strip {
   position: absolute;
-  inset: 0;
-  clip-path: polygon(0 23%, 100% 17%, 100% 100%, 0 100%);
-  transition: transform 0.35s ease;
+  top: 17%;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  z-index: 5;
+  padding: 0 8px;
 }
 
-.booster-pack-top-strip {
-  position: absolute;
-  inset: 0;
-  clip-path: polygon(0 0, 100% 0, 100% 17%, 0 23%);
-  transition: transform 0.35s ease;
-  transform-origin: 90% 10%;
-  z-index: 2;
+.booster-tear-pull-badge {
+  background: linear-gradient(135deg, #ffd700, #ff8c00);
+  color: #0d0d1a;
+  font-family: var(--font-heading);
+  font-size: 0.62rem;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6);
+  letter-spacing: 0.05em;
+  animation: pull-tab-bounce 1.5s ease-in-out infinite;
+  white-space: nowrap;
 }
 
-/* ── Spektakuläre Reiß-Animation ── */
-.booster-pack-btn.is-tearing .booster-pack-top-strip {
-  animation: foil-rip-off 0.7s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+@keyframes pull-tab-bounce {
+  0%, 100% { transform: translateX(0); }
+  50%       { transform: translateX(5px); }
 }
 
-.booster-pack-btn.is-tearing .booster-pack-body {
-  animation: pack-body-drop 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+.booster-tear-line-dotted {
+  flex: 1;
+  height: 2px;
+  margin-left: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 215, 0, 0.8) 0px,
+    rgba(255, 215, 0, 0.8) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
 }
 
-@keyframes foil-rip-off {
+/* ── Filmreife Reiß-Animation beim Klick ── */
+.booster-pack-wrapper.is-tearing {
+  cursor: default;
+}
+
+.booster-pack-wrapper.is-tearing .booster-pack-card {
+  animation: booster-rip-burst 0.85s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes booster-rip-burst {
   0% {
-    transform: translate3d(0, 0, 0) rotate(0deg);
+    transform: scale(1);
     filter: brightness(1);
-    opacity: 1;
   }
-  25% {
-    transform: translate3d(15px, -15px, 0) rotate(6deg);
-    filter: brightness(1.6) drop-shadow(0 0 25px #ffd700);
+  15% {
+    transform: scale(1.04) rotate(-1deg);
+    filter: brightness(1.3) drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+  }
+  30% {
+    transform: scale(1.08) rotate(1.5deg);
+    filter: brightness(1.7) drop-shadow(0 0 50px rgba(180, 79, 255, 1));
   }
   60% {
-    transform: translate3d(65px, -45px, 0) rotate(22deg) scale(0.96);
-    filter: brightness(2) drop-shadow(0 0 35px #b44fff);
-    opacity: 0.85;
+    transform: scale(1.14) translateY(10px);
+    filter: brightness(2.2) drop-shadow(0 0 70px #ffd700);
+    opacity: 0.9;
   }
   100% {
-    transform: translate3d(130px, -80px, 0) rotate(38deg) scale(0.85);
+    transform: scale(1.22) translateY(20px);
     opacity: 0;
-    filter: brightness(2.5);
+    filter: brightness(3) blur(6px);
   }
 }
 
-@keyframes pack-body-drop {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  20% {
-    transform: translate3d(-4px, 4px, 0) scale(1.02);
-    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.7));
-  }
-  45% {
-    transform: translate3d(3px, 12px, 0) scale(1.04);
-    filter: brightness(1.3) drop-shadow(0 0 45px rgba(180, 79, 255, 0.9));
-  }
-  100% {
-    transform: translate3d(0, 20px, 0) scale(1.08);
-    opacity: 0;
-    filter: brightness(1.8) blur(4px);
-  }
+/* FX Layer */
+.booster-tear-fx-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  overflow: visible;
 }
 
-/* ── Reiß-Naht, Laser & Funken ── */
-.booster-tear-seam {
+/* Laser-Schnittlinie */
+.booster-rip-laser {
   position: absolute;
   top: 17%;
   left: -10%;
   width: 120%;
-  pointer-events: none;
-  z-index: 10;
+  height: 4px;
+  background: linear-gradient(90deg, #ffffff, #ffd700, #ff4500, #b44fff, #00d4ff);
+  box-shadow: 0 0 15px #ffd700, 0 0 30px #b44fff, 0 0 45px #00d4ff;
+  transform: rotate(-3deg);
+  animation: laser-sweep 0.7s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
 }
 
-.booster-tear-laser {
-  width: 100%;
-  height: 5px;
-  background: linear-gradient(90deg, #ffd700, #ff4500, #b44fff, #00d4ff, #ffffff);
-  box-shadow: 0 0 15px #ffd700, 0 0 30px #b44fff, 0 0 50px #00d4ff;
-  transform: rotate(-3.5deg);
-  animation: laser-slash 0.7s ease-out forwards;
-}
-
-@keyframes laser-slash {
+@keyframes laser-sweep {
   0% {
     clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
     opacity: 0;
@@ -190,60 +204,72 @@
   20% {
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
     opacity: 1;
+    transform: rotate(-3deg) scaleY(2);
   }
   100% {
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-    transform: rotate(-3.5deg) scaleY(4);
+    transform: rotate(-3deg) scaleY(6);
     opacity: 0;
   }
 }
 
-.booster-tear-glow {
+/* Ausbrechender Licht-Burst */
+.booster-rip-light-flare {
   position: absolute;
-  inset: -20px;
-  background: radial-gradient(ellipse at 50% 50%, rgba(255, 215, 0, 0.8) 0%, rgba(180, 79, 255, 0.6) 40%, transparent 75%);
-  animation: glow-burst 0.7s ease-out forwards;
-  pointer-events: none;
+  top: 17%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 215, 0, 0.8) 30%, rgba(180, 79, 255, 0.5) 60%, transparent 80%);
+  animation: light-burst-expand 0.85s ease-out forwards;
 }
 
-@keyframes glow-burst {
-  0% { transform: scale(0.4); opacity: 0; }
-  35% { transform: scale(1.4); opacity: 1; }
-  100% { transform: scale(2.2); opacity: 0; }
+@keyframes light-burst-expand {
+  0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+  30% { transform: translate(-50%, -50%) scale(1.8); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(3.5); opacity: 0; }
 }
 
-.booster-tear-particles {
+/* Glühende Partikel-Embers */
+.booster-rip-sparks {
   position: absolute;
-  top: 0;
-  left: 30%;
-  display: flex;
-  gap: 15px;
-  pointer-events: none;
+  top: 17%;
+  left: 0;
+  right: 0;
+  height: 20px;
 }
 
-.booster-tear-particles .spark {
-  display: inline-block;
-  font-size: 1.8rem;
-  animation: spark-fly 0.7s ease-out forwards;
+.spark-dot {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 10px #ffd700, 0 0 20px #ff6b35;
+  animation: ember-fly 0.75s ease-out forwards;
 }
 
-.spark.s1 { animation-delay: 0.05s; transform: translate(-30px, -20px); }
-.spark.s2 { animation-delay: 0.12s; transform: translate(20px, -35px); }
-.spark.s3 { animation-delay: 0.08s; transform: translate(50px, -15px); }
-.spark.s4 { animation-delay: 0.18s; transform: translate(-10px, -40px); }
-.spark.s5 { animation-delay: 0.1s;  transform: translate(35px, -50px); }
+.spark-dot.d1 { left: 15%; --tx: -40px; --ty: -35px; animation-delay: 0.05s; }
+.spark-dot.d2 { left: 30%; --tx: -20px; --ty: -55px; animation-delay: 0.1s; background: #ffd700; }
+.spark-dot.d3 { left: 45%; --tx: 10px;  --ty: -70px; animation-delay: 0.08s; }
+.spark-dot.d4 { left: 60%; --tx: 35px;  --ty: -45px; animation-delay: 0.15s; background: #00d4ff; box-shadow: 0 0 12px #00d4ff; }
+.spark-dot.d5 { left: 75%; --tx: 60px;  --ty: -30px; animation-delay: 0.12s; background: #ffd700; }
+.spark-dot.d6 { left: 25%; --tx: -50px; --ty: 15px;  animation-delay: 0.14s; background: #b44fff; box-shadow: 0 0 12px #b44fff; }
+.spark-dot.d7 { left: 55%; --tx: 20px;  --ty: -60px; animation-delay: 0.06s; }
+.spark-dot.d8 { left: 85%; --tx: 50px;  --ty: -15px; animation-delay: 0.18s; }
 
-@keyframes spark-fly {
+@keyframes ember-fly {
   0% {
-    transform: scale(0.3) translate(0, 0);
+    transform: translate(0, 0) scale(0.5);
     opacity: 0;
   }
   30% {
-    transform: scale(1.3) translate(var(--tx, 15px), var(--ty, -25px));
+    transform: translate(var(--tx), var(--ty)) scale(1.6);
     opacity: 1;
   }
   100% {
-    transform: scale(2) translate(calc(var(--tx, 30px) * 2), calc(var(--ty, -50px) * 2));
+    transform: translate(calc(var(--tx) * 1.8), calc(var(--ty) * 1.8)) scale(0.2);
     opacity: 0;
   }
 }
@@ -285,15 +311,19 @@
 
 .booster-reveal-all-btn {
   margin-top: var(--space-sm);
-  padding: 8px 20px;
-  font-size: 0.85rem;
+  padding: 8px 24px;
+  font-size: 0.9rem;
+  font-weight: 700;
   border-color: rgba(255, 215, 0, 0.4);
   color: #ffd700;
+  transition: all var(--transition-fast);
 }
 
 .booster-reveal-all-btn:hover {
-  background: rgba(255, 215, 0, 0.15);
+  background: rgba(255, 215, 0, 0.18);
   border-color: #ffd700;
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
 }
 
 .booster-reveal-grid {
@@ -416,37 +446,16 @@
 }
 
 /* ── Booster Pack Image ── */
-.booster-pack-image-container {
-  position: relative;
-  display: inline-block;
-}
-
 .booster-pack-img {
   width: 260px;
   height: auto;
   border-radius: 0;
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.35s ease;
+  transition: filter 0.35s ease;
   filter:
-    drop-shadow(0 0 18px rgba(138, 43, 226, 0.85))
-    drop-shadow(0 0 40px rgba(255, 215, 0, 0.45))
+    drop-shadow(0 0 20px rgba(138, 43, 226, 0.85))
+    drop-shadow(0 0 45px rgba(255, 215, 0, 0.5))
     drop-shadow(0 20px 30px rgba(0, 0, 0, 0.6));
   animation: booster-float 3s ease-in-out infinite;
-}
-
-.booster-pack-btn:hover:not(:disabled) .booster-pack-img {
-  transform: scale(1.08) translateY(-10px);
-  filter:
-    drop-shadow(0 0 35px rgba(138, 43, 226, 1))
-    drop-shadow(0 0 75px rgba(255, 215, 0, 0.85))
-    drop-shadow(0 0 20px rgba(255, 100, 255, 0.6))
-    drop-shadow(0 25px 35px rgba(0, 0, 0, 0.7));
-}
-
-.booster-pack-btn:active:not(:disabled) .booster-pack-img {
-  transform: scale(0.96) translateY(3px);
-  filter:
-    drop-shadow(0 0 12px rgba(138, 43, 226, 0.7))
-    drop-shadow(0 8px 15px rgba(0, 0, 0, 0.5));
 }
 
 @keyframes booster-float {

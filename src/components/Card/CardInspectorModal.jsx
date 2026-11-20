@@ -281,7 +281,6 @@ const CardInspectorModal = ({
                   </div>
                   <div className="sb-inspector-front-bottom-row">
                     <span className={`badge badge-${rarity}`}>{rarity}</span>
-                    <span className="sb-inspector-front-power">⚡ {power}</span>
                   </div>
                 </div>
               </div>
@@ -321,6 +320,18 @@ const CardInspectorModal = ({
           <div className="sb-inspector-meta-header">
             <div className="sb-inspector-tags-row">
               <span className={`badge badge-${rarity}`}>⭐ {rarity.toUpperCase()}</span>
+              {type && (
+                <span
+                  className="badge"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.08)',
+                    color: elementInfo.color,
+                    border: '1px solid rgba(255, 255, 255, 0.12)',
+                  }}
+                >
+                  {elementInfo.icon} {type}
+                </span>
+              )}
               {currentTier && (
                 <span className={`badge mycards-holo-label--tier-${fusionLevel}`}>
                   {currentTier.name}
@@ -328,34 +339,6 @@ const CardInspectorModal = ({
               )}
             </div>
             <h2 className="sb-inspector-title text-gradient">{name}</h2>
-          </div>
-
-          {/* Element Affinity Box */}
-          <div className="sb-inspector-element-box">
-            <div
-              className="sb-element-icon-circle"
-              style={{ color: elementInfo.color, borderColor: elementInfo.color }}
-            >
-              {elementInfo.icon}
-            </div>
-            <div className="sb-element-info-text">
-              <div className="sb-element-info-title">{elementInfo.title}</div>
-              <div className="sb-element-info-desc">{elementInfo.desc}</div>
-            </div>
-          </div>
-
-          {/* Kraft (Power) Stat Bar */}
-          <div className="sb-inspector-stat-section">
-            <div className="sb-stat-header">
-              <span>⚡ Kampfkraft (Power)</span>
-              <strong>{power} / 100</strong>
-            </div>
-            <div className="sb-stat-bar-track">
-              <div
-                className="sb-stat-bar-fill"
-                style={{ width: `${Math.min(100, Math.max(10, power))}%` }}
-              />
-            </div>
           </div>
 
           {/* Lore / Story Text */}

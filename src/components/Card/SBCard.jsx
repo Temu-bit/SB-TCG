@@ -135,7 +135,6 @@ const SBCard = ({
         </div>
         <div className="sb-card__footer">
           <span className={`badge badge-${rarity}`}>{RARITY_EMOJIS[rarity]} {rarity}</span>
-          {power && <span className="sb-card__power">⚡{power}</span>}
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { subscribeToAllCards } from '../firebase/firestore';
 import { useAuth } from '../context/useAuth';
 import SBCard from '../components/Card/SBCard';
+import CardInspectorModal from '../components/Card/CardInspectorModal';
 import galleryBg from '../assets/gallery-bg.jpg';
 import './Gallery.css';
 
@@ -114,27 +115,17 @@ const Gallery = () => {
         </div>
       )}
 
-      {/* Karten-Detail-Modal */}
+      {/* Epischer 3D-Karten-Inspektor */}
       {selectedCard && (
-        <div className="gallery-modal" onClick={() => setSelectedCard(null)}>
-          <div className="gallery-modal__inner" onClick={(e) => e.stopPropagation()}>
-            <SBCard card={selectedCard} owned={ownedIds.has(selectedCard.id)} size="large" revealed={false} />
-            <div className="gallery-modal__info glass">
-              <h2 className="gallery-modal__name">{selectedCard.name}</h2>
-              <span className={`badge badge-${selectedCard.rarity}`}>{selectedCard.rarity}</span>
-              <p className="gallery-modal__desc">{selectedCard.description || 'Keine Beschreibung vorhanden.'}</p>
-              {selectedCard.power && (
-                <div className="gallery-modal__stat">
-                  ⚡ Kraft: <strong>{selectedCard.power}</strong>
-                </div>
-              )}
-              <div className={`gallery-modal__owned ${ownedIds.has(selectedCard.id) ? 'yes' : 'no'}`}>
-                {ownedIds.has(selectedCard.id) ? '✅ In deiner Sammlung' : '❌ Noch nicht gesammelt'}
-              </div>
-            </div>
-            <button className="gallery-modal__close" onClick={() => setSelectedCard(null)}>✕</button>
-          </div>
-        </div>
+        <CardInspectorModal
+          card={selectedCard}
+          cardsList={filtered}
+          onClose={() => setSelectedCard(null)}
+          onSelectCard={setSelectedCard}
+          ownedIds={ownedIds}
+          cardCounts={userData?.cardCounts || {}}
+          fusionLevels={userData?.fusionLevels || {}}
+        />
       )}
       </div>
     </div>

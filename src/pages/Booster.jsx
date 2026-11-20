@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/useAuth';
 import { openBoosterPack, claimFreeBoosters } from '../firebase/firestore';
 import SBCard from '../components/Card/SBCard';
+import CardInspectorModal from '../components/Card/CardInspectorModal';
 import boosterPackImg from '../assets/booster-pack.png';
 import { sound } from '../utils/sound';
 import './Booster.css';
@@ -13,6 +14,7 @@ const Booster = () => {
   const [opening, setOpening] = useState(false);
   const [isTearing, setIsTearing] = useState(false);
   const [revealedCards, setRevealedCards] = useState({});
+  const [inspectedCard, setInspectedCard] = useState(null);
   const [error, setError] = useState(null);
   const [timeLeft, setTimeLeft] = useState('');
   const [canClaim, setCanClaim] = useState(false);
@@ -259,7 +261,7 @@ const Booster = () => {
             </h2>
             <p className="booster-reveal-subtitle">
               {allRevealed 
-                ? 'Bewege die Maus über die Karten für den 3D-Hologramm-Effekt!' 
+                ? 'Klicke auf eine Karte für die 360°-Inspektion oder bewege die Maus für den 3D-Glanz!' 
                 : 'Klicke auf eine verdeckte Karte, um sie einzeln zu enthüllen!'}
             </p>
 
@@ -277,6 +279,11 @@ const Booster = () => {
                   card={card} 
                   faceDown={!revealedCards[idx]}
                   onFlip={() => handleFlipCard(idx)}
+                  onClick={() => {
+                    if (revealedCards[idx]) {
+                      setInspectedCard(card);
+                    }
+                  }}
                   size="large"
                   interactive3D={true}
                 />
@@ -297,6 +304,19 @@ const Booster = () => {
             </div>
           )}
         </div>
+      )}
+
+      {/* Epischer 3D-Karten-Inspektor für frisch gezogene Karten */}
+      {inspectedCard && (
+        <CardInspectorModal
+          card={inspectedCard}
+          cardsList={drawnCards}
+          onClose={() => setInspectedCard(null)}
+          onSelectCard={setInspectedCard}
+          ownedIds={new Set(userData?.collection || [])}
+          cardCounts={userData?.cardCounts || {}}
+          fusionLevels={userData?.fusionLevels || {}}
+        />
       )}
     </div>
   );

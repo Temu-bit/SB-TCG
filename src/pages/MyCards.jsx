@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getCardsByIds, fuseCard, sellCard, FUSION_TIERS } from '../firebase/firestore';
 import { useAuth } from '../context/useAuth';
 import SBCard from '../components/Card/SBCard';
+import CardInspectorModal from '../components/Card/CardInspectorModal';
 import boosterPackImg from '../assets/booster-pack.png';
 import './MyCards.css';
 
@@ -20,6 +21,7 @@ const MyCards = () => {
   const [loading, setLoading] = useState(true);
   const [sort, setSort] = useState('rarity-desc');
   const [search, setSearch] = useState('');
+  const [selectedCard, setSelectedCard] = useState(null);
   const [fusionLoading, setFusionLoading] = useState(null); // cardId der Karte, die gerade verschmolzen wird
   const [fusionMsg, setFusionMsg] = useState('');
 
@@ -172,6 +174,7 @@ const MyCards = () => {
                     revealed={false}
                     count={count}
                     fusionLevel={currentLevel}
+                    onClick={() => setSelectedCard(card)}
                   />
                   {canFuse && (
                     <button
@@ -209,6 +212,19 @@ const MyCards = () => {
             </div>
           )}
         </>
+      )}
+
+      {/* Epischer 3D-Karten-Inspektor */}
+      {selectedCard && (
+        <CardInspectorModal
+          card={selectedCard}
+          cardsList={sorted}
+          onClose={() => setSelectedCard(null)}
+          onSelectCard={setSelectedCard}
+          ownedIds={new Set(userData?.collection || [])}
+          cardCounts={cardCounts}
+          fusionLevels={fusionLevels}
+        />
       )}
     </div>
   );

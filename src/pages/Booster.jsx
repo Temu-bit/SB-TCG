@@ -129,57 +129,54 @@ const Booster = () => {
 
   return (
     <div className="page booster-page">
-      <div className="booster-header-row">
-        <h1 className="page-title text-gradient">✨ Booster Öffnen</h1>
+      {/* ── Kompakte Dashboard-Statusleiste ── */}
+      <div className="booster-dashboard glass">
+        <div className="booster-dashboard__item">
+          <span className="booster-dashboard__icon">🃏</span>
+          <div className="booster-dashboard__text">
+            <span className="booster-dashboard__label">Booster</span>
+            <strong className="booster-dashboard__value text-gradient-gold">{credits} verfügbar</strong>
+          </div>
+        </div>
+
+        {/* Regeneration / Daily Timer */}
+        {credits < 2 && (
+          <div className="booster-dashboard__item booster-dashboard__timer">
+            <span className="booster-dashboard__icon">⏳</span>
+            <div className="booster-dashboard__text">
+              <span className="booster-dashboard__label">Nachschub</span>
+              {canClaim ? (
+                <button 
+                  className="btn btn-gold btn-sm booster-quick-claim" 
+                  onClick={handleClaim}
+                  disabled={claiming}
+                >
+                  {claiming ? 'Hole...' : '🎁 2 Packs abholen!'}
+                </button>
+              ) : (
+                <strong className="booster-dashboard__clock">{timeLeft}</strong>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Audio Toggle */}
         <button 
-          className="booster-sound-toggle glass" 
+          className="booster-sound-btn" 
           onClick={toggleSound} 
           title={isMuted ? "Ton einschalten" : "Ton stummschalten"}
         >
-          {isMuted ? '🔇 Ton aus' : '🔊 Ton an'}
+          {isMuted ? '🔇' : '🔊'}
         </button>
-      </div>
-      
-      <div className="booster-status glass">
-        <span>Deine Booster-Credits:</span>
-        <strong className="booster-status__credits">{credits}</strong>
       </div>
 
       {error && <div className="booster-error">{error}</div>}
 
       {!opening ? (
-        <div className="booster-container">
-          
-          {/* FREE BOOSTER SECTION */}
-          {credits < 2 && (
-            <div className="booster-claim-section glass-elevated">
-              <h3>🎁 Tägliche Belohnung</h3>
-              <p>Warte auf die Regeneration, um wieder 2 volle Booster zu erhalten!</p>
-              {canClaim ? (
-                <button 
-                  className="btn btn-primary booster-claim-btn animate-pulse-glow" 
-                  onClick={handleClaim}
-                  disabled={claiming}
-                >
-                  {claiming ? 'Hole Booster...' : '🎉 2 Free Booster abholen!'}
-                </button>
-              ) : (
-                <div className="booster-timer">
-                  <span>Nächste Booster in:</span>
-                  <strong className="booster-timer__clock">{timeLeft}</strong>
-                </div>
-              )}
-            </div>
-          )}
-
-          {credits < 2 && <div className="booster-divider"></div>}
-
+        <div className="booster-stage-container">
           {credits > 0 ? (
-            <div className="booster-interactive-area">
-              <p className="page-subtitle booster-prompt animate-pulse">
-                ⚡ Klicke auf das Pack, um es aufzureißen!
-              </p>
-              
+            <div className="booster-altar">
+              {/* Das schwebende Booster Pack auf dem Altar */}
               <div 
                 className={`booster-pack-wrapper ${isTearing ? 'is-tearing' : ''}`} 
                 onClick={handleOpenPack}
@@ -187,17 +184,16 @@ const Booster = () => {
                 tabIndex={0}
               >
                 <div className="booster-pack-card">
-                  <img src={boosterPackImg} alt="Booster Pack" className="booster-pack-img" />
+                  <img src={boosterPackImg} alt="Chaos Joker Booster Pack" className="booster-pack-img" />
 
-                  {/* Reiß-Führung (Schnittlinie & Pull-Tab) */}
+                  {/* Diskrete, elegante Reiß-Ecke oben rechts (verdeckt kein Artwork!) */}
                   {!isTearing && (
-                    <div className="booster-tear-tab-strip">
-                      <span className="booster-tear-pull-badge">AUFREISSEN ▶</span>
-                      <div className="booster-tear-line-dotted" />
+                    <div className="booster-tear-corner-hint">
+                      <span className="corner-notch" />
                     </div>
                   )}
 
-                  {/* Filmreife Reiß-Effekte */}
+                  {/* Filmreife Reiß-Effekte beim Öffnen */}
                   {isTearing && (
                     <div className="booster-tear-fx-layer">
                       <div className="booster-rip-laser" />
@@ -215,20 +211,47 @@ const Booster = () => {
                     </div>
                   )}
                 </div>
+
+                {/* Magischer 3D-Boden-Runenkreis (Pedestal) */}
+                {!isTearing && (
+                  <div className="booster-pedestal" aria-hidden="true">
+                    <div className="pedestal-ring ring-outer" />
+                    <div className="pedestal-ring ring-middle" />
+                    <div className="pedestal-ring ring-inner" />
+                    <div className="pedestal-glow" />
+                  </div>
+                )}
               </div>
+
+              {/* Eleganter Action-Button & Info darunter */}
+              {!isTearing && (
+                <div className="booster-cta-group animate-fade-in-up">
+                  <button 
+                    className="btn btn-gold btn-lg booster-main-cta animate-pulse-glow"
+                    onClick={handleOpenPack}
+                    disabled={loading || isTearing}
+                  >
+                    ⚡ Pack aufreißen
+                  </button>
+                  <span className="booster-pack-hint">
+                    ✨ 5 Karten • Garantiert mind. 1x Selten oder besser
+                  </span>
+                </div>
+              )}
             </div>
           ) : (
-            <div className="booster-empty">
-              <div className="booster-pack-image-container booster-pack-image-container--empty">
+            /* Leerer Zustand (0 Booster) */
+            <div className="booster-empty glass">
+              <div className="booster-pack-card">
                 <img src={boosterPackImg} alt="Booster Pack" className="booster-pack-img booster-pack-img--empty" />
               </div>
               <h2>Keine Booster-Packs übrig!</h2>
-              <p>Warte auf die Regeneration oben oder verdiene weitere durch Events und Tauschgeschäfte.</p>
+              <p>Warte auf die Regeneration oben oder tausche Karten mit anderen Spielern auf dem Markt.</p>
             </div>
           )}
         </div>
       ) : (
-        /* SLOW-REVEAL AREA */
+        /* ── SLOW-REVEAL AREA ── */
         <div className="booster-reveal-container">
           <div className="booster-reveal-header">
             <h2 className="booster-reveal-title text-gradient-gold">

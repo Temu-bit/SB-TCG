@@ -272,12 +272,6 @@ const CardInspectorModal = ({
                 <div className="sb-inspector-front-body">
                   <div className="sb-inspector-front-title-row">
                     <span className="sb-inspector-front-name">{name}</span>
-                    <span
-                      className="sb-inspector-front-element"
-                      style={{ color: elementInfo.color }}
-                    >
-                      {elementInfo.icon} {type}
-                    </span>
                   </div>
                   <div className="sb-inspector-front-bottom-row">
                     <span className={`badge badge-${rarity}`}>{rarity}</span>
@@ -320,18 +314,6 @@ const CardInspectorModal = ({
           <div className="sb-inspector-meta-header">
             <div className="sb-inspector-tags-row">
               <span className={`badge badge-${rarity}`}>⭐ {rarity.toUpperCase()}</span>
-              {type && (
-                <span
-                  className="badge"
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.08)',
-                    color: elementInfo.color,
-                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                  }}
-                >
-                  {elementInfo.icon} {type}
-                </span>
-              )}
               {currentTier && (
                 <span className={`badge mycards-holo-label--tier-${fusionLevel}`}>
                   {currentTier.name}

@@ -127,11 +127,6 @@ const SBCard = ({
       <div className="sb-card__body">
         <div>
           <div className="sb-card__name">{name}</div>
-          {type && (
-            <div className="sb-card__type" style={{ color: typeColor }}>
-              {type}
-            </div>
-          )}
         </div>
         <div className="sb-card__footer">
           <span className={`badge badge-${rarity}`}>{RARITY_EMOJIS[rarity]} {rarity}</span>
